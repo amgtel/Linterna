@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    tools:context=".MainActivity"
+    tools:ignore="ContentDescription">
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/banner_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-4101422007494917/6098668593"/>
+
+    <ImageView
+        android:id="@+id/shake"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="130dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/banner_main"
+        android:src="@drawable/ic_shake_off" />
+
+
+    <ImageView
+        android:id="@+id/valorar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_below="@id/banner_main"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_valorar" />
+
+    <ImageView
+        android:id="@+id/compartir"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/banner_main"
+        android:src="@drawable/ic_compartir" />
+
+    <ImageView
+        android:id="@+id/contacto"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/banner_main"
+        android:src="@drawable/ic_contacto"/>
+
+
+
+    <ImageView
+        android:id="@+id/turn_on_off"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        android:src="@drawable/torch_off" />
+
+
+</RelativeLayout>
