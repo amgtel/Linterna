@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     private SensorManager sensorManager;
     private ShakeDetector sd;
 
+    private String master;
+
     //Layout elements
     @BindView(R.id.turn_on_off) ImageView turn_on_off;
     @BindView(R.id.valorar) ImageView valorar;
