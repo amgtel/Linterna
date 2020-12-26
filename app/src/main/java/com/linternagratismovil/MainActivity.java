@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -133,10 +134,13 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                 if(!shaking){
                     shake.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_shake_on));
                     sd.start(sensorManager);
+                    Toast.makeText(getApplicationContext(),"Shake ON!!",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     shake.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_shake_off));
                     sd.stop();
+                    Toast.makeText(getApplicationContext(),"Shake OFF!!",Toast.LENGTH_SHORT).show();
+
                 }
                 shaking = !shaking;
 
@@ -178,11 +182,13 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     }
 
 
+
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        sd.stop();
         notificationManager.cancel(notificationId);
+        sd.stop();
+
+        super.onDestroy();
 
     }
 
@@ -213,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "notification";
             String description = "torch on";
-            int importance = NotificationManager.IMPORTANCE_LOW;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
@@ -228,12 +234,12 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
 
         builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getResources().getString(R.string.app_name))
-                .setContentText("Light On")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+        .setOngoing(true);
 
         notificationManager = NotificationManagerCompat.from(this);
         // notificationId is a unique int for each notification that you must define
