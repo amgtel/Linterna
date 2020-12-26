@@ -9,9 +9,11 @@ import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -31,13 +33,12 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
     private boolean state = false; //True (light on) - False (light off)
     private boolean shaking = false; //False (shaking not active) - True (shaking active)
-    private String cameraId;
-    private CameraManager cameraManager;
-
     private SensorManager sensorManager;
     private ShakeDetector sd;
 
-    private String master;
+    private String cameraId;
+    private CameraManager cameraManager;
+
 
     //Layout elements
     @BindView(R.id.turn_on_off) ImageView turn_on_off;
@@ -73,13 +74,11 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
         //Flash control
         cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        //cameraManagerG = cameraManager;
 
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sd = new ShakeDetector(this);
         sd.setSensitivity(ShakeDetector.SENSITIVITY_MEDIUM);
-        sd.start(sensorManager);
 
         valorar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,8 +117,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             @Override
             public void onClick(View view) {
 
-                shaking = !shaking;
-                if(shaking){
+                if(!shaking){
                     shake.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_shake_on));
                     sd.start(sensorManager);
                 }
@@ -127,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                     shake.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_shake_off));
                     sd.stop();
                 }
+                shaking = !shaking;
 
             }
         });
@@ -157,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         });
 
     }
+
 
     @Override
     protected void onDestroy() {
