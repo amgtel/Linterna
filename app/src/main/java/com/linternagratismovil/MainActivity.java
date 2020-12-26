@@ -1,6 +1,9 @@
 package com.linternagratismovil;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
@@ -16,6 +19,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.ads.AdRequest;
@@ -48,6 +53,13 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     @BindView(R.id.shake) ImageView shake;
     @BindView(R.id.banner_main) AdView banner_main;
 
+    //Channel
+    private String CHANNEL_ID = "555";
+    private int notificationId = 555;
+    private NotificationManagerCompat notificationManager;
+    NotificationCompat.Builder builder;
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -75,11 +87,12 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         //Flash control
         cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
-
+        //Shake control
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sd = new ShakeDetector(this);
         sd.setSensitivity(ShakeDetector.SENSITIVITY_MEDIUM);
 
+        //Options control
         valorar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         });
 
 
+        //Ligh control
         turn_on_off.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,9 +156,12 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                     state = !state;
                     if (state) {
                         turn_on_off.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.torch_on));
+                        notificationManager.notify(notificationId, builder.build());
+
 
                     } else {
                         turn_on_off.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.torch_off));
+                        notificationManager.cancel(notificationId);
                     }
 
                 } catch (CameraAccessException e) {
@@ -155,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             }
         });
 
+        //Notification control
+        createNotificaton();
+
     }
 
 
@@ -162,8 +182,11 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     protected void onDestroy() {
         super.onDestroy();
         sd.stop();
+        notificationManager.cancel(notificationId);
+
     }
 
+    //Shake result
     @Override
     public void hearShake() {
         try {
@@ -172,13 +195,49 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             state = !state;
             if (state) {
                 turn_on_off.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.torch_on));
+                notificationManager.notify(notificationId, builder.build());
+
 
             } else {
                 turn_on_off.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.torch_off));
+                notificationManager.cancel(notificationId);
             }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void createNotificaton(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "notification";
+            String description = "torch on";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+
+        builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(getResources().getString(R.string.app_name))
+                .setContentText("Light On")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent);
+
+        notificationManager = NotificationManagerCompat.from(this);
+        // notificationId is a unique int for each notification that you must define
+        //notificationManager.notify(notificationId, builder.build());
 
     }
 }
