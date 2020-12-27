@@ -185,9 +185,8 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
     @Override
     protected void onDestroy() {
-        notificationManager.cancel(notificationId);
+        //notificationManager.cancel(notificationId);
         sd.stop();
-
         super.onDestroy();
 
     }
@@ -221,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             String description = "torch on";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setSound(null, null);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
@@ -228,18 +228,16 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             notificationManager.createNotificationChannel(channel);
         }
 
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
+        PendingIntent pendingIntent =  PendingIntent.getActivity(getApplicationContext(), 0, getIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getResources().getString(R.string.app_name))
+                .setContentTitle(getResources().getString(R.string.app_name) + " ON")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(pendingIntent)
-        .setOngoing(true);
+                .setOngoing(true)
+                .setAutoCancel(false);
 
         notificationManager = NotificationManagerCompat.from(this);
         // notificationId is a unique int for each notification that you must define
